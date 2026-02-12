@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>多民族习俗文化展示</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #fdf7f0;
+      --bg-panel: #ffffff;
+      --bg-accent: #fff3e0;
+      --primary: #c41e3a;
+      --primary-soft: #f6d7d9;
+      --primary-dark: #8c1229;
+      --text-main: #2c1810;
+      --text-muted: #7a665b;
+      --border-soft: #ead8c4;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 10px 35px rgba(0, 0, 0, 0.06);
+      --shadow-medium: 0 14px 40px rgba(0, 0, 0, 0.08);
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top, #ffe1d4 0, rgba(255, 225, 212, 0.6) 22%, transparent 55%),
+        linear-gradient(180deg, #fdf7f0 0, #fef8f2 40%, #fdf7f0 100%);
+    }
+
+    .page {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 顶部标题区 */
+    .page-header {
+      text-align: center;
+      margin-bottom: 4px;
+      position: relative;
+      padding-top: 4px;
+    }
+
+    .page-header::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c41e3a, #f3b343);
+      opacity: 0.75;
+    }
+
+    .page-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 183, 146, 0.6);
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      color: var(--primary-dark);
+      box-shadow: 0 4px 12px rgba(196, 30, 58, 0.12);
+    }
+
+    .page-title-row span.icon {
+      font-size: 1rem;
+    }
+
+    .page-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    /* 主区域布局 */
+    .content {
+      display: grid;
+      grid-template-columns: 1.1fr 1.5fr;
+      gap: 22px;
+      margin-top: 10px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 左侧面板：日历卡片 */
+    .panel {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 16px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at -10% -10%, rgba(243, 179, 67, 0.25), transparent 55%),
+        radial-gradient(circle at 110% 110%, rgba(196, 30, 58, 0.12), transparent 60%);
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary-dark);
+    }
+
+    .panel-title-pill {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 244, 236, 0.98);
+      border: 1px solid rgba(234, 216, 196, 0.9);
+      color: var(--text-muted);
+    }
+
+    .panel-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    /* 月份切换条 */
+    .month-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 249, 244, 0.98);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(234, 216, 196, 0.9);
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    .month-main {
+      font-weight: 600;
+      color: var(--primary-dark);
+      min-width: 130px;
+      text-align: center;
+    }
+
+    .month-arrow-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      transition: background var(--transition-fast), color var(--transition-fast),
+        transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .month-arrow-btn:hover {
+      background: rgba(250, 219, 200, 0.9);
+      color: var(--primary-dark);
+      box-shadow: 0 4px 10px rgba(196, 30, 58, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* 日历栅格 */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: 0.76rem;
+    }
+
+    .calendar-header-cell {
+      text-align: center;
+      padding: 4px 0 6px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.78rem;
+    }
+
+    .calendar-cell {
+      aspect-ratio: 1;
+      position: relative;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: default;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid transparent;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        box-shadow var(--transition-fast), transform var(--transition-fast),
+        border-color var(--transition-fast);
+    }
+
+    .calendar-cell span {
+      pointer-events: none;
+    }
+
+    .calendar-cell:not(.empty):hover {
+      background: #fff4e6;
+    }
+
+    /* 节日样式 */
+    .calendar-cell.has-festival {
+      cursor: pointer;
+      background: #fff0f1;
+      border-color: rgba(196, 30, 58, 0.18);
+      color: var(--primary-dark);
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(196, 30, 58, 0.08);
+    }
+
+    .calendar-cell.has-festival::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f3b343;
+    }
+
+    .calendar-cell.active {
+      background: linear-gradient(135deg, #c41e3a, #f3b343) !important;
+      color: #fff !important;
+      box-shadow: 0 6px 14px rgba(196, 30, 58, 0.35);
+      border: none;
+      transform: translateY(-1px);
+    }
+
+    .calendar-cell.active::after {
+      background: #fff;
+    }
+
+    /* 节日列表 (Chip) */
+    .festival-list {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(216, 190, 163, 0.85);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .festival-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: #fff7ee;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      border: 1px solid rgba(234, 216, 196, 0.9);
+      transition: background var(--transition-fast), transform var(--transition-fast),
+        box-shadow var(--transition-fast), border-color var(--transition-fast),
+        color var(--transition-fast);
+      max-width: 100%;
+      white-space: nowrap;
+    }
+
+    .festival-chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #c41e3a;
+    }
+
+    .festival-chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      background: #fff2e8;
+    }
+
+    .festival-chip.active {
+      background: linear-gradient(135deg, #fff0f1, #fff7dd);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      font-weight: 500;
+      box-shadow: 0 6px 14px rgba(196, 30, 58, 0.25);
+    }
+
+    .panel-hint {
+      margin-top: 8px;
+      font-size: 0.74rem;
+      text-align: center;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .panel-hint-badge {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(234, 216, 196, 0.9);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    /* 右侧详情 */
+    .detail-panel {
+      position: relative;
+    }
+
+    .detail-inner {
+      height: 100%;
+      min-height: 420px;
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(243, 179, 67, 0.22), transparent 55%),
+        radial-gradient(circle at 120% 110%, rgba(196, 30, 58, 0.2), transparent 60%),
+        linear-gradient(145deg, rgba(255, 244, 235, 0.96), rgba(255, 255, 255, 0.96));
+      box-shadow: var(--shadow-medium);
+      padding: 20px 20px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .detail-inner::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255,255,255,0.7);
+      right: -50px;
+      bottom: -40px;
+      pointer-events: none;
+    }
+
+    /* 顶部标签行，允许换行 */
+    .detail-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .detail-tag-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-right: 2px;
+    }
+
+    .detail-tag {
+      font-size: 0.75rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(255, 237, 220, 0.94);
+      color: var(--primary-dark);
+      border: 1px solid rgba(234, 216, 196, 0.95);
+      white-space: nowrap;
+    }
+
+    .detail-festival-name {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-top: 8px;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-festival-name .icon {
+      font-size: 1.3rem;
+    }
+
+    .detail-meta-row {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+    }
+
+    .detail-meta-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .detail-body {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: var(--radius-md);
+      padding: 14px 14px 12px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: var(--text-main);
+      flex-grow: 1;
+      overflow-y: auto;
+      border: 1px dashed rgba(226, 200, 170, 0.9);
+    }
+
+    .detail-body p {
+      margin-bottom: 0.7em;
+    }
+
+    .detail-body strong {
+      color: var(--primary-dark);
+    }
+
+    .detail-footer {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .detail-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #f3b343;
+    }
+
+    .detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-outline,
+    .btn-primary {
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 0.78rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        box-shadow var(--transition-fast), transform var(--transition-fast),
+        border-color var(--transition-fast);
+      background: transparent;
+      white-space: nowrap;
+    }
+
+    .btn-outline {
+      border-color: rgba(216, 190, 163, 0.95);
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-outline:hover {
+      background: #fff1e0;
+      color: var(--primary-dark);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #c41e3a, #f3b343);
+      color: #fffdfa;
+      border-color: transparent;
+      box-shadow: 0 6px 16px rgba(196, 30, 58, 0.35);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 10px 22px rgba(196, 30, 58, 0.4);
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(196, 30, 58, 0.3);
+    }
+
+    /* 空状态 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      gap: 6px;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 4px;
+    }
+
+    .empty-state h3 {
+      font-size: 1.02rem;
+      margin-bottom: 2px;
+    }
+
+    .empty-state p {
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    /* 小屏优化 */
+    @media (max-width: 640px) {
+      .page {
+        padding-inline: 14px;
+      }
+
+      .detail-inner {
+        min-height: 360px;
+        padding: 18px 15px 14px;
+      }
+
+      .detail-body {
+        max-height: none;
+      }
+
+      .detail-actions {
+        justify-content: flex-end;
+      }
+
+      .festival-chip {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="page-header">
+      <div class="page-title-row">
+        <span class="icon">🏮</span>
+        <span>多民族节日 · 习俗文化</span>
+      </div>
+      <h1 class="page-title">民族习俗图鉴</h1>
+      <p class="page-subtitle">按日期探索不同民族的节日智慧</p>
+    </header>
+
+    <section class="content">
+      <!-- 左侧：日历 + 当月节日列表 -->
+      <aside class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>习俗日历</span>
+            <span class="panel-title-pill">按日期发现节日</span>
+          </div>
+        </div>
+
+        <p class="panel-desc">
+          支持农历与公历的节日换算，在真实日期上标记各民族的重要节日。点击有红点的日期或下方标签卡，可在下方查看详细习俗内容。
+        </p>
+
+        <div class="month-bar">
+          <button class="month-arrow-btn" id="prevMonth" type="button">‹</button>
+          <div class="month-main" id="currentMonthDisplay">2026年 2月</div>
+          <button class="month-arrow-btn" id="nextMonth" type="button">›</button>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+
+        <div class="panel-hint">
+          <span class="panel-hint-badge">提示</span>
+          <span>有小圆点的日期为当月节日</span>
+        </div>
+
+        <div class="festival-list" id="monthFestivalList"></div>
+      </aside>
+
+      <!-- 右侧：节日详情 -->
+      <section class="detail-panel">
+        <div class="detail-inner" id="detailContainer">
+          <div class="empty-state">
+            <div class="empty-state-icon">📅</div>
+            <h3>请选择一个节日</h3>
+            <p>在左侧日历中点击带红点的日期，或直接点选下方节日标签<br>即可查看对应民族的详细习俗内容。</p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script>
+    // --- 1. 数据准备 (源自 allinfo.txt) ---
+    // 格式：[民族, 节日名称, 原始日期描述, 描述]
+    const RAW_DATA = [
+   
+  ["汉族","春节","农历正月初一","贴春联、守岁、拜年、吃年夜饭，中华民族最隆重传统节日，新疆各族群众融合本民族特色共庆新春"],
+  ["汉族","元宵节","农历正月十五","吃元宵、赏花灯、猜灯谜，新疆各地举办社火、灯展等民俗活动，各族欢聚"],
+  ["汉族","清明节","公历4月4日-6日","扫墓祭祖、踏青郊游，新疆各族群众缅怀先人、亲近自然"], 
+  ["汉族","端午节","农历五月初五","吃粽子、挂艾草、佩香囊，新疆各地传承端午驱邪祈福的传统"],
+  ["汉族","中秋节","农历八月十五","赏月、吃月饼、赏桂花，新疆各族家庭团圆欢聚，共庆中秋"],
+  ["汉族","冬至","公历12月21-23日","吃饺子、喝肉汤，新疆南北疆均有冬至进补的民俗传统"],
+
+  // 新疆回族
+  ["回族","肉孜节（开斋节）","伊斯兰历10月1日","封斋期满开斋，沐浴盛装到清真寺聚礼，炸馓子、油香，走亲访友互道祝福，新疆回族最隆重的节日之一"],
+  ["回族","古尔邦节（宰牲节）","伊斯兰历12月10日","节前游坟缅怀先人，宰牛羊献祭、家族聚餐，清真寺集体聚礼，青年载歌载舞，新疆全域各族共庆"],
+  ["回族","圣纪节","伊斯兰历3月12日","纪念穆罕默德诞辰与逝世，清真寺听经讲道、集体礼拜，宰牛羊设宴聚餐，按户馈赠牛羊肉和油香"],
+  ["回族","法图麦节（姑太节）","伊斯兰历9月14日","回族妇女专属节日，备特色饮食、聚于清真寺祈福，缅怀穆罕默德之女法图麦，新疆回族保留此传统"],
+
+  // 新疆满族
+  ["满族","春节","农历正月初一","贴春联、吃饺子、守岁拜年，融合新疆地域饮食特色，保留满族挂笺、祭祖、供祖宗牌位等传统"],
+  ["满族","颁金节","公历11月13日（农历十月十三）","满族族庆日，纪念女真改族名为满洲，聚餐、歌舞表演，传承满族民俗文化，新疆满族核心民族节日"],
+  ["满族","添仓节","农历正月二十五","祭仓神、煮黏高粱米饭，饭盆插秫秸小马/锄头，寓意马驮粮食、五谷丰登，新疆满族保留的北方传统"],
+  ["满族","元宵节（上元节）","农历正月十五","挂彩灯、吃元宵，部分地区举办满族传统体育活动，与汉族习俗融合"],
+  ["满族","走百病","农历正月二十","满族妇女专属节日，结伴远走、走沙滚冰，嬉戏祈福，寓意祛除百病、新年安康"],
+  ["满族","二月二龙抬头","农历二月初二","剃龙头、吃猪头肉，祈福风调雨顺，新疆满族保留的北方民俗"],
+
+  // 新疆塔塔尔族
+  ["塔塔尔族","撒班节（犁头节）","公历6月20-25日","国家级非遗，塔塔尔族核心农事节日，无宗教色彩，赛马、摔跤、叼匙竞走、载歌载舞，庆祝农业丰收，新疆奇台县大泉塔塔尔乡为核心传承地"],
+  ["塔塔尔族","肉孜节（开斋节）","伊斯兰历10月1日","节前大扫除、制作油炸糕点，清真寺聚礼，走亲访友互赠美食，伊犁、塔城为核心庆祝地"],
+  ["塔塔尔族","古尔邦节（宰牲节）","伊斯兰历12月10日","宰牲畜献祭，制作塔塔尔族特色美食聚餐，清真寺礼拜，家族团聚祈福"],
+  ["塔塔尔族","登宵节","伊斯兰历7月27日","通宵礼拜祈祷，纪念穆罕默德登宵，塔塔尔族重要宗教传统节日"],
+  ["塔塔尔族","诺鲁孜节","公历3月22日","吃诺鲁孜饭、跳麦西来甫，辞旧迎新，与新疆其他民族共庆"],
+
+  // 新疆维吾尔族
+  ["维吾尔族","诺鲁孜节","公历3月22日","新疆区级非遗，吃诺鲁孜饭（五谷杂粮粥）、跳麦西来甫、弹都塔尔/热瓦普，辞旧迎新，新疆各族共同参与庆祝"],
+  ["维吾尔族","古尔邦节（宰牲节）","伊斯兰历12月10日","维吾尔族最重要传统节日，宰牲、聚餐、走亲访友，各地举办麦西来甫、木卡姆表演，新疆全域欢庆"],
+  ["维吾尔族","肉孜节（开斋节）","伊斯兰历10月1日","封斋期满开斋，炸馓子、烤包子、吃油香，祈福感恩，清真寺聚礼，青年载歌载舞"],
+  ["维吾尔族","木卡姆艺术节","公历每年5月","非传统节日，新疆特色文化节日，演唱十二木卡姆、举办民俗展演，传承维吾尔族非遗文化"],
+
+  // 新疆哈萨克族
+  ["哈萨克族","纳吾鲁孜节","公历3月22日","吃纳吾鲁孜饭、赛马、叼羊、姑娘追、唱黑走马，草原迎新盛会，新疆哈萨克族核心节日"],
+  ["哈萨克族","古尔邦节（宰牲节）","伊斯兰历12月10日","宰羊、煮手抓肉、弹冬不拉，家族团聚祈福，草原全域举办歌舞、赛马活动"],
+  ["哈萨克族","肉孜节（开斋节）","伊斯兰历10月1日","开斋聚餐、歌舞表演，搭配赛马、叼羊、摔跤等草原民俗活动"],
+  ["哈萨克族","阿肯阿依特斯节","公历每年7-8月","哈萨克族文化节日，阿肯弹唱比赛、诗歌对唱，传承哈萨克族口头文学，新疆草原特色节日"],
+
+  // 新疆柯尔克孜族
+  ["柯尔克孜族","诺鲁孜节","公历3月22日","吃诺鲁孜饭、赛马、叼羊、弹库姆孜，迎接春天，新疆柯尔克孜族核心传统节日"],
+  ["柯尔克孜族","古尔邦节（宰牲节）","伊斯兰历12月10日","宰牲祭祀、家族聚餐，纪念先知易卜拉欣，高原举办叼羊、马上角力等活动"],
+  ["柯尔克孜族","肉孜节（开斋节）","伊斯兰历10月1日","开斋祈福，制作柯尔克孜族特色美食，青年男女弹库姆孜、唱民谣"],
+  ["柯尔克孜族","玛纳斯节","公历每年9月","纪念柯尔克孜族史诗《玛纳斯》，举办史诗演唱、赛马、摔跤，国家级非遗文化节日"],
+
+  // 新疆塔吉克族
+  ["塔吉克族","肖贡巴哈尔节（迎春节/诺鲁孜节）","公历3月21-23日","帕米尔高原独有节日，无宗教色彩，撒面粉祈福、吃杂烩饭、跳鹰舞，推举“肖贡”挨家拜节，节期3天"],
+  ["塔吉克族","古尔邦节（宰牲节）","伊斯兰历12月10日","宰牲、聚餐、弹鹰笛、吹唢呐，高原上的团圆节，塔吉克族核心宗教节日"],
+  ["塔吉克族","肉孜节（开斋节）","伊斯兰历10月1日","开斋欢庆，制作塔吉克族特色糕点，青年男女跳鹰舞、唱高原民谣"],
+  ["塔吉克族","播种节","公历3月下旬（肖贡巴哈尔节后）","帕米尔高原农事节日，引水耕田、播种祈福，简单聚餐庆祝，塔吉克族独有民俗"],
+
+  // 新疆乌孜别克族
+  ["乌孜别克族","诺鲁孜节","公历3月22日","吃诺鲁孜饭、跳麦西来甫、弹弹布尔，辞旧迎新，保留中亚与新疆融合的民俗特色"],
+  ["乌孜别克族","古尔邦节（宰牲节）","伊斯兰历12月10日","宰牲、聚餐，制作乌孜别克族特色美食如烤包子、手抓饭，走亲访友送祝福"],
+  ["乌孜别克族","肉孜节（开斋节）","伊斯兰历10月1日","开斋祈福，炸馓子、烤油馕，清真寺聚礼，家庭团聚欢庆"],
+  ["乌孜别克族","苏麦莱克节","公历每年冬季","乌孜别克族传统节日，制作特色粥品“苏麦莱克”，邻里分享、祈福安康，新疆独有民俗"],
+
+  // 新疆俄罗斯族
+  ["俄罗斯族","圣诞节","公历12月25日","装饰圣诞树、吃俄式大餐、唱圣诞歌，传承东正教传统，伊犁、塔城为核心庆祝地"],
+  ["俄罗斯族","洗礼节","公历1月19日","取圣水、沐浴祈福，前往教堂做礼拜，新疆俄罗斯族独有宗教传统节日"],
+  ["俄罗斯族","谢肉节（送冬节）","公历2月底-3月初","烤薄饼、跳圆圈舞、烧稻草人，送别冬天迎接春天，无宗教色彩的民俗节日"],
+  ["俄罗斯族","春节","农历正月初一","与汉族共庆，贴春联、吃饺子，融合俄式美食与中国传统年俗"],
+
+  // 新疆锡伯族
+  ["锡伯族","西迁节（四一八节）","公历4月18日","国家级非遗，锡伯族最隆重节日，纪念西迁戍边，吃萨其马、跳贝伦舞、射箭比赛、唱锡伯族民歌"],
+  ["锡伯族","抹黑节","农历正月十六","锡伯族独有民俗，互相抹锅底灰，祈福驱邪、消灾避疫，象征新年平安顺遂"],
+  ["锡伯族","春节","农历正月初一","贴春联、吃饺子、守岁拜年，保留东北与新疆融合的民俗，祭祖、挂灯笼"],
+  ["锡伯族","中秋节","农历八月十五","赏月、吃月饼，举办射箭、摔跤等传统体育活动，与汉族习俗融合"],
+  ["锡伯族","颁金节","公历11月13日","与满族共庆，聚餐、歌舞，传承锡伯族与满族同源的民族文化"],
+
+  // 新疆蒙古族（卫拉特蒙古）
+  ["蒙古族（新疆）","那达慕大会","农历六月初四","新疆草原传统盛会，赛马、摔跤、射箭、弹马头琴、唱蒙古长调，各族群众均可参与"],
+  ["蒙古族（新疆）","白节（春节）","农历正月初一","草原新年，吃手把肉、喝奶茶、祭火神、祭祖，向长辈敬献哈达，草原全域欢庆"],
+  ["蒙古族（新疆）","祭敖包","农历五月十三","堆石祈福、绕敖包三圈、献哈达、祭祀草原神灵，祈求风调雨顺、牛羊肥壮"],
+  ["蒙古族（新疆）","马奶节","农历八月末","草原特色节日，制作马奶酒、聚餐、赛马，庆祝马奶丰收，祈福安康"],
+  ["蒙古族（新疆）","诺鲁孜节","公历3月22日","与新疆其他民族共庆，吃诺鲁孜饭，草原举办小型歌舞活动"],
+
+  // 新疆达斡尔族
+  ["达斡尔族","斡包节","公历6月8日","新疆达斡尔族核心节日，堆斡包、绕包祈福、赛马、射箭，传承北方游牧民族民俗"],
+  ["达斡尔族","春节","农历正月初一","吃手把肉、喝奶茶、守岁拜年，祭祖、贴春联，融合北方游牧与新疆地域特色"],
+  ["达斡尔族","抹黑节","农历正月十六","互相抹锅底灰，寓意消灾避邪、新年平安，与锡伯族习俗相融"],
+  ["达斡尔族","阔德格·乌都日节","农历正月十六","达斡尔族传统节日，青年男女聚唱民歌、跳集体舞，祈福新年吉祥"]
+
+    ];
+
+    // --- 2. 日期处理逻辑 ---
+
+    // 农历中文数字映射
+    const CHINESE_NUM = {
+      '正': 1, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+      '冬': 11, '腊': 12
+    };
+    const DAY_MAP = {
+      '初一':1, '初二':2, '初三':3, '初四':4, '初五':5, '初六':6, '初七':7, '初八':8, '初九':9, '初十':10,
+      '十一':11, '十二':12, '十三':13, '十四':14, '十五':15, '十六':16, '十七':17, '十八':18, '十九':19, '二十':20,
+      '廿一':21, '廿二':22, '廿三':23, '廿四':24, '廿五':25, '廿六':26, '廿七':27, '廿八':28, '廿九':29, '三十':30
+    };
+
+    function parseChineseDateStr(str) {
+      const match = str.match(/农历(.)月(.+)/);
+      if (!match) return null;
+      const mStr = match[1];
+      const dStr = match[2];
+      const m = CHINESE_NUM[mStr] || parseInt(mStr);
+      const d = DAY_MAP[dStr];
+      if (!m || !d) return null;
+      return { m, d };
+    }
+
+    // 构建节日对象
+    function createFestivalObj(solar, ethnic, name, desc, originalDate) {
+      return {
+        date: new Date(solar.getYear(), solar.getMonth() - 1, solar.getDay()),
+        ethnic, name, desc, originalDate,
+        id: Math.random().toString(36).substr(2, 9)
+      };
+    }
+
+    // 将 Raw Data 转换为带具体日期的对象列表（并合并同日同名节日）
+    function getFestivalsForYear(year) {
+      const rawList = [];
+
+      RAW_DATA.forEach(item => {
+        const [ethnic, name, dateStr, desc] = item;
+        let dateObj = null;
+
+        if (dateStr.includes("公历")) {
+          const match = dateStr.match(/(\d+)月(\d+)日/);
+          if (match) {
+            dateObj = new Date(year, parseInt(match[1]) - 1, parseInt(match[2]));
+          }
+        } else if (dateStr.includes("农历")) {
+          const lunarDate = parseChineseDateStr(dateStr);
+          if (lunarDate) {
+            try {
+              let l1 = Lunar.fromYmd(year, lunarDate.m, lunarDate.d);
+              let s1 = l1.getSolar();
+              if (s1.getYear() === year) rawList.push(createFestivalObj(s1, ethnic, name, desc, dateStr));
+
+              let l2 = Lunar.fromYmd(year - 1, lunarDate.m, lunarDate.d);
+              let s2 = l2.getSolar();
+              if (s2.getYear() === year) rawList.push(createFestivalObj(s2, ethnic, name, desc, dateStr));
+              return;
+            } catch (e) {}
+          }
+        }
+
+        if (dateObj) {
+          rawList.push({
+            date: dateObj,
+            ethnic, name, desc, originalDate: dateStr,
+            id: Math.random().toString(36).substr(2, 9)
+          });
+        }
+      });
+
+      // 合并：同一日期+节日名
+      const mergedMap = new Map();
+      rawList.forEach(item => {
+        const dateKey = `${item.date.getFullYear()}-${item.date.getMonth()}-${item.date.getDate()}`;
+        const uniqueKey = `${dateKey}_${item.name}`;
+
+        if (mergedMap.has(uniqueKey)) {
+          const existing = mergedMap.get(uniqueKey);
+
+          if (!existing.ethnic.includes(item.ethnic)) {
+            existing.ethnic += `、${item.ethnic}`;
+          }
+
+          if (!existing.isMerged) {
+            const oldEthnic = existing.originalEthnic || existing.ethnic.split('、')[0];
+            existing.mergedDesc = [`<strong>${oldEthnic}：</strong>${existing.desc}`];
+            existing.isMerged = true;
+          }
+          existing.mergedDesc.push(`<strong>${item.ethnic}：</strong>${item.desc}`);
+        } else {
+          item.originalEthnic = item.ethnic;
+          mergedMap.set(uniqueKey, item);
+        }
+      });
+
+      const resultList = Array.from(mergedMap.values()).map(item => {
+        if (item.isMerged) {
+          item.desc = item.mergedDesc.join('<br>');
+        }
+        return item;
+      });
+
+      return resultList.sort((a, b) => a.date - b.date);
+    }
+
+    // --- 3. UI 渲染逻辑 ---
+
+    let currentYear = 2026;
+    let currentMonth = 1; // 0-11
+    let allFestivals = [];
+
+    const monthDisplay = document.getElementById('currentMonthDisplay');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const festivalListEl = document.getElementById('monthFestivalList');
+    const detailContainer = document.getElementById('detailContainer');
+
+    function init() {
+      currentYear = 2026;
+      currentMonth = 1; // 默认 2 月
+
+      allFestivals = getFestivalsForYear(currentYear);
+      render();
+
+      document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+      document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+    }
+
+    function changeMonth(delta) {
+      currentMonth += delta;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+        allFestivals = getFestivalsForYear(currentYear);
+      } else if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+        allFestivals = getFestivalsForYear(currentYear);
+      }
+      render();
+    }
+
+    function render() {
+      monthDisplay.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+
+      calendarGrid.innerHTML = '';
+      festivalListEl.innerHTML = '';
+
+      const weeks = ['日','一','二','三','四','五','六'];
+      weeks.forEach(w => {
+        const div = document.createElement('div');
+        div.className = 'calendar-header-cell';
+        div.textContent = w;
+        calendarGrid.appendChild(div);
+      });
+
+      const firstDay = new Date(currentYear, currentMonth, 1);
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const startDay = firstDay.getDay();
+
+      const monthFestivals = allFestivals.filter(f =>
+        f.date.getFullYear() === currentYear && f.date.getMonth() === currentMonth
+      );
+
+      // 前导空格
+      for (let i = 0; i < startDay; i++) {
+        const div = document.createElement('div');
+        div.className = 'calendar-cell empty';
+        calendarGrid.appendChild(div);
+      }
+
+      // 日期单元
+      for (let d = 1; d <= daysInMonth; d++) {
+        const div = document.createElement('div');
+        div.className = 'calendar-cell';
+        div.innerHTML = `<span>${d}</span>`;
+
+        const daysFestivals = monthFestivals.filter(f => f.date.getDate() === d);
+
+        if (daysFestivals.length > 0) {
+          div.classList.add('has-festival');
+          div.onclick = () => {
+            document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('active'));
+            div.classList.add('active');
+            showDetail(daysFestivals[0]);
+            renderChips(daysFestivals);
+          };
+
+          // 默认高亮一个示例（以 2026 年春节为例）
+          if (currentYear === 2026 && currentMonth === 1 && d === 17) {
+            setTimeout(() => div.click(), 0);
+          }
+        }
+
+        calendarGrid.appendChild(div);
+      }
+
+      // Chip 列表
+      monthFestivals.forEach(f => {
+        const btn = document.createElement('button');
+        btn.className = 'festival-chip';
+        btn.innerHTML = `
+          <span class="festival-chip-dot"></span>
+          <span>${f.date.getDate()}日 · ${f.name}</span>
+        `;
+        btn.onclick = () => {
+          showDetail(f);
+          // 高亮对应日期
+          Array.from(calendarGrid.children).forEach(c => {
+            if (!c.classList.contains('empty') && c.textContent.trim() == f.date.getDate()) {
+              document.querySelectorAll('.calendar-cell').forEach(x => x.classList.remove('active'));
+              c.classList.add('active');
+            }
+          });
+
+          // 小屏时，滚动到详情区域
+          if (window.innerWidth <= 900) {
+            detailContainer.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        };
+        festivalListEl.appendChild(btn);
+      });
+    }
+
+    function renderChips(festivals) {
+      const chips = document.querySelectorAll('.festival-chip');
+      chips.forEach(c => c.classList.remove('active'));
+      festivals.forEach(f => {
+        chips.forEach(c => {
+          if (c.innerText.includes(f.name) && c.innerText.includes(f.date.getDate() + '日')) {
+            c.classList.add('active');
+          }
+        });
+      });
+    }
+
+    function showDetail(festival) {
+      const ethnics = festival.ethnic.split('、');
+      const tagsHtml = ethnics.map(e => `<span class="detail-tag">${e}</span>`).join('');
+
+      const html = `
+        <div class="detail-tag-row">
+          <span class="detail-tag-label">参与民族：</span>
+          ${tagsHtml}
+        </div>
+        <h2 class="detail-festival-name">
+          <span class="icon">✨</span>
+          <span>${festival.name}</span>
+        </h2>
+        <div class="detail-meta-row">
+          <span><strong>时间</strong> ${currentYear}年${festival.date.getMonth() + 1}月${festival.date.getDate()}日</span>
+          <span><strong>农历 / 规则</strong> ${festival.originalDate}</span>
+        </div>
+        <div class="detail-body">
+          <p>${festival.desc}</p>
+        </div>
+        <div class="detail-footer">
+          
+          
+        </div>
+      `;
+      detailContainer.innerHTML = html;
+    }
+
+    init();
+  </script>
+</body>
+</html>
