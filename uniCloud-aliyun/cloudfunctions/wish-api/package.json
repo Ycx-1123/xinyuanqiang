@@ -1,0 +1,7 @@
+{
+  "name": "wish-api",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

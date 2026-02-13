@@ -1,0 +1,22 @@
+{
+  "bsonType": "object",
+  "required": ["title", "content", "wisherName"],
+  "permission": {
+    "read": true,
+    "create": true,
+    "update": true,
+    "delete": true
+  },
+  "properties": {
+    "_id": { "description": "系统自动生成的唯一ID" },
+    "uid": { "bsonType": "string", "description": "发布者的临时身份证号" },
+    "title": { "bsonType": "string", "title": "心愿标题" },
+    "content": { "bsonType": "string", "title": "心愿详情" },
+    "wisherName": { "bsonType": "string", "title": "称呼" },
+    "status": { "bsonType": "int", "defaultValue": 0, "title": "状态 0:待实现 1:已实现" },
+    "helperName": { "bsonType": "string", "title": "帮忙人的名字" },
+    "helperUid": { "bsonType": "string", "title": "帮忙人的ID" },
+    "replyMessage": { "bsonType": "string", "title": "帮忙人的留言" },
+    "createTime": { "bsonType": "timestamp", "defaultValue": { "$env": "now" } }
+  }
+}
