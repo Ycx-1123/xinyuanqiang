@@ -17,6 +17,17 @@
     "helperName": { "bsonType": "string", "title": "帮忙人的名字" },
     "helperUid": { "bsonType": "string", "title": "帮忙人的ID" },
     "replyMessage": { "bsonType": "string", "title": "帮忙人的留言" },
+    "evidence": { 
+      "bsonType": "array", 
+      "title": "圆梦证据",
+      "items": {
+        "bsonType": "object",
+        "properties": {
+          "type": { "bsonType": "string" },
+          "url": { "bsonType": "string" }
+        }
+      }
+    },
     "createTime": { "bsonType": "timestamp", "defaultValue": { "$env": "now" } }
   }
 }

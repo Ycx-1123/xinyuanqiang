@@ -23,8 +23,34 @@
 
     <view v-else class="done-card">
       <text class="done-title">✨ 圆梦瞬间</text>
-      <text class="done-info">好心邻居：{{ info.helperName }}</text>
-      <text class="done-msg">留言：{{ info.replyMessage }}</text>
+      <view class="info-row">
+        <text class="label">好心邻居：</text>
+        <text class="val">{{ info.helperName }}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">邻居留言：</text>
+        <text class="val">{{ info.replyMessage }}</text>
+      </view>
+
+      <view v-if="info.evidence && info.evidence.length > 0" class="evidence-box">
+        <text class="sub-title">📸 现场记录</text>
+        <view class="media-grid">
+          <view v-for="(item, index) in info.evidence" :key="index" class="media-show">
+            <image 
+              v-if="item.type === 'image'" 
+              :src="item.url" 
+              mode="aspectFill" 
+              class="show-img"
+              @click="previewImg(item.url)"
+            ></image>
+            <video 
+              v-if="item.type === 'video'" 
+              :src="item.url" 
+              class="show-video"
+            ></video>
+          </view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -53,6 +79,13 @@ const goToFulfill = () => {
   uni.navigateTo({ url: `/pages/wish/fulfill?id=${wishId}` });
 };
 
+// 预览图片
+const previewImg = (url) => {
+  uni.previewImage({
+    urls: [url]
+  });
+};
+
 const formatDate = (ts) => {
   if (!ts) return '';
   const d = new Date(ts);
@@ -68,7 +101,17 @@ page { background-color: #FDFBF7; }
 .user-header { display: flex; align-items: center; margin-bottom: 40rpx; .avatar { width: 80rpx; height: 80rpx; background: #FFD3B6; border-radius: 50%; text-align: center; line-height: 80rpx; color: #fff; margin-right: 20rpx; } .user-info { flex: 1; .name { display: block; font-weight: bold; } .time { font-size: 24rpx; color: #999; } } }
 .content { .title { display: block; font-size: 38rpx; font-weight: bold; margin-bottom: 20rpx; } .desc { color: #666; line-height: 1.8; } }
 .help-btn { background: linear-gradient(135deg, #FFB75E, #ED8F03); color: #fff; border-radius: 50rpx; font-weight: bold; }
-.done-card { background: #E6F7ED; border-radius: 32rpx; padding: 40rpx; border: 2rpx dashed #2ECC71; .done-title { color: #2ECC71; font-weight: bold; display: block; margin-bottom: 20rpx; } .done-info, .done-msg { display: block; font-size: 28rpx; color: #444; margin-bottom: 10rpx; } }
+
+.done-card { background: #E6F7ED; border-radius: 32rpx; padding: 40rpx; border: 2rpx dashed #2ECC71; }
+.done-title { color: #2ECC71; font-weight: bold; font-size: 32rpx; display: block; margin-bottom: 30rpx; }
+.info-row { margin-bottom: 16rpx; font-size: 28rpx; .label { color: #888; } .val { color: #333; font-weight: 500; } }
+
+.evidence-box { margin-top: 30rpx; padding-top: 20rpx; border-top: 1rpx dashed #C1E1C1; }
+.sub-title { font-size: 26rpx; color: #2ECC71; margin-bottom: 20rpx; display: block; }
+.media-grid { display: flex; flex-wrap: wrap; gap: 20rpx; }
+.media-show { width: 48%; height: 200rpx; border-radius: 12rpx; overflow: hidden; background: #000; }
+.show-img, .show-video { width: 100%; height: 100%; }
+
 .status-tag { font-size: 24rpx; padding: 6rpx 16rpx; border-radius: 20rpx; }
 .status-pending { background: #FFF0DE; color: #FF9F43; }
 .status-done { background: #E6F7ED; color: #2ECC71; }
