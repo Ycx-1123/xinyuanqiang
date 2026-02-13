@@ -1,50 +1,39 @@
-/* 颜色变量 */
-$uni-main-color: #FF9F43;
+/* 颜色变量 - 高级粉红系 */
+$uni-main-color: #FF4B5C; /* 主品牌色：珊瑚红 */
 $uni-text-color-inverse: #fff;
 
+/* 渐变色变量 (推荐在 style 中直接使用 linear-gradient) */
+$uni-gradient-primary: linear-gradient(135deg, #FF4B5C 0%, #FF8F70 100%);
+$uni-shadow-primary: 0 10rpx 30rpx rgba(255, 75, 92, 0.3);
+
 /* 行为相关颜色 */
-$uni-color-primary: #007aff;
-$uni-color-success: #4cd964;
-$uni-color-warning: #f0ad4e;
-$uni-color-error: #dd524d;
+$uni-color-primary: #FF4B5C;
+$uni-color-success: #00B894; /* 清新绿，配合粉色很搭 */
+$uni-color-warning: #FDCB6E;
+$uni-color-error: #D63031;
 
 /* 文字基本颜色 */
-$uni-text-color: #333; 
-$uni-text-color-grey: #999; 
-$uni-text-color-placeholder: #808080;
-$uni-text-color-disable: #c0c0c0;
+$uni-text-color: #2D3436; /* 深灰，比纯黑更高级 */
+$uni-text-color-grey: #636E72; 
+$uni-text-color-placeholder: #B2BEC3;
+$uni-text-color-disable: #DFE6E9;
 
 /* 背景颜色 */
 $uni-bg-color: #fff;
-$uni-bg-color-grey: #f8f8f8;
+$uni-bg-color-grey: #FFF6F8; /* 🔥 全局背景改为极淡的粉色 */
 $uni-bg-color-hover: #f1f1f1; 
 $uni-bg-color-mask: rgba(0, 0, 0, 0.4); 
 
 /* 边框颜色 */
-$uni-border-color: #c8c7cc;
+$uni-border-color: #eee;
 
-/* 文字尺寸 */
+/* 尺寸变量 */
 $uni-font-size-sm: 12px;
 $uni-font-size-base: 14px;
-$uni-font-size-lg: 16px; /* 🔥 已修正：加了 px */
+$uni-font-size-lg: 16px;
 
-/* 图片尺寸 */
-$uni-img-size-sm: 20px;
-$uni-img-size-base: 26px;
-$uni-img-size-lg: 40px;
-
-/* Border Radius */
-$uni-border-radius-sm: 2px;
-$uni-border-radius-base: 3px;
-$uni-border-radius-lg: 6px;
+/* 圆角 */
+$uni-border-radius-sm: 4px;
+$uni-border-radius-base: 8px;
+$uni-border-radius-lg: 12px;
 $uni-border-radius-circle: 50%;
-
-/* 水平间距 */
-$uni-spacing-row-sm: 5px;
-$uni-spacing-row-base: 10px;
-$uni-spacing-row-lg: 15px;
-
-/* 垂直间距 */
-$uni-spacing-col-sm: 4px;
-$uni-spacing-col-base: 8px;
-$uni-spacing-col-lg: 12px;

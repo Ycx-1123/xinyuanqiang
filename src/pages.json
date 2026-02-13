@@ -3,36 +3,38 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "居民心愿墙" 
+				"navigationBarTitleText": "居民心愿墙",
+				"enablePullDownRefresh": true,
+				"navigationBarBackgroundColor": "#FFF6F8" 
 			}
-		}, 
-
+		},
 		{
 			"path": "pages/wish/add",
 			"style": {
-				"navigationBarTitleText": "许个愿",
-				"navigationBarBackgroundColor": "#FDFBF7"
+				"navigationBarTitleText": "发布心愿",
+				"navigationBarBackgroundColor": "#FFF6F8"
 			}
 		},
 		{
 			"path": "pages/wish/detail",
 			"style": {
-			  "navigationBarTitleText": "心愿详情",
-			  "navigationBarBackgroundColor": "#FDFBF7"
+				"navigationBarTitleText": "心愿详情",
+				"navigationBarBackgroundColor": "#FFF6F8"
 			}
 		},
 		{
 			"path": "pages/wish/fulfill",
 			"style": {
-			  "navigationBarTitleText": "我来帮忙",
-			  "navigationBarBackgroundColor": "#FDFBF7"
+				"navigationBarTitleText": "爱心帮扶",
+				"navigationBarBackgroundColor": "#FFF6F8"
 			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	}
+		"navigationBarTitleText": "居民心愿墙",
+		"navigationBarBackgroundColor": "#FFF6F8",
+		"backgroundColor": "#FFF6F8"
+	},
+	"uniIdRouter": {}
 }
