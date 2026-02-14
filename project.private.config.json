@@ -1,0 +1,14 @@
+{
+  "libVersion": "3.14.2",
+  "projectname": "uni-preset-vue-4e1acd8323944f68c3d3d0622e035738ba6b438f",
+  "setting": {
+    "urlCheck": true,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "compileHotReLoad": true
+  }
+}

@@ -1,0 +1,82 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/culture/culture",
+			"style": {
+				"navigationBarTitleText": "习俗文化",
+				"navigationBarBackgroundColor": "#F8F8F8"
+			}
+		},
+		{
+			"path": "pages/wish/wish",
+			"style": {
+				"navigationBarTitleText": "心愿墙",
+				"navigationBarBackgroundColor": "#F8F8F8"
+			}
+		},
+		{
+			"path": "pages/profile/profile",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"navigationBarBackgroundColor": "#F8F8F8"
+			}
+		},
+		{
+			"path": "pages/wish/add",
+			"style": {
+				"navigationBarTitleText": "发布心愿"
+			}
+		},
+		{
+			"path": "pages/wish/fulfill",
+			"style": {
+				"navigationBarTitleText": "实现心愿"
+			}
+		},
+		{
+			"path": "pages/wish/detail",
+			"style": {
+				"navigationBarTitleText": "心愿详情"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "固固和原原",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#636E72",
+		"selectedColor": "#FF4B5C",
+		"borderStyle": "white",
+		"backgroundColor": "#FFFFFF",
+		"list": [
+			{
+				"pagePath": "pages/culture/culture",
+				"text": "习俗",
+				"iconPath": "static/tab-culture.png",
+				"selectedIconPath": "static/tab-culture-active.png"
+			},
+			{
+				"pagePath": "pages/wish/wish",
+				"text": "心愿墙",
+				"iconPath": "static/tab-wish.png",
+				"selectedIconPath": "static/tab-wish-active.png"
+			},
+			{
+				"pagePath": "pages/profile/profile",
+				"text": "我的",
+				"iconPath": "static/tab-profile.png",
+				"selectedIconPath": "static/tab-profile-active.png"
+			}
+		]
+	}
+}
