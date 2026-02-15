@@ -1,8 +1,8 @@
 <template>
   <view class="container">
     <view class="title-area">
-      <text class="main-title">许个愿吧 ✨</text>
-      <text class="sub-title">让温暖的邻居帮你实现</text>
+      <text class="main-title">{{ isEditMode ? '修改心愿 📝' : '许个愿吧 ✨' }}</text>
+      <text class="sub-title">{{ isEditMode ? '完善信息让大家更懂你' : '让温暖的邻居帮你实现' }}</text>
     </view>
 
     <view class="form-card">
@@ -20,42 +20,81 @@
       </view>
     </view>
 
-    <button class="submit-btn" @click="submitWish">✨ 发布心愿</button>
+    <button class="submit-btn" @click="submitWish">
+      {{ isEditMode ? '确认修改' : '✨ 发布心愿' }}
+    </button>
   </view>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app'; // 🔥 引入 onLoad
 
 const formData = reactive({ title: '', content: '', wisherName: '' });
+const isEditMode = ref(false); // 是否处于编辑模式
+const wishId = ref(''); // 编辑时的心愿ID
+
+// 🔥 页面加载时判断是“新增”还是“修改”
+onLoad((options) => {
+  if (options.id) {
+    isEditMode.value = true;
+    wishId.value = options.id;
+    loadWishDetail(options.id);
+  }
+});
+
+// 如果是修改模式，先去云端拉取旧数据
+const loadWishDetail = (id) => {
+  uni.showLoading({ title: '加载中...' });
+  uniCloud.callFunction({
+    name: 'wish-api',
+    data: { action: 'get_detail', params: { id: id } },
+    success: (res) => {
+      uni.hideLoading();
+      if (res.result.code === 0) {
+        const data = res.result.data;
+        // 回填表单
+        formData.title = data.title;
+        formData.content = data.content;
+        formData.wisherName = data.wisherName;
+      }
+    }
+  });
+};
 
 const submitWish = () => {
   if (!formData.title || !formData.content || !formData.wisherName) {
     return uni.showToast({ title: '请填写完整', icon: 'none' });
   }
 
-  // ==== 新增防护：获取用户 ID，如果没有则拦截 ====
   const currentUserId = uni.getStorageSync('my_user_id');
   if (!currentUserId) {
     return uni.showToast({ title: '无法获取身份信息，请先授权登录', icon: 'none' });
   }
-  // ==============================================
 
-  uni.showLoading({ title: '发送中...' });
+  uni.showLoading({ title: isEditMode.value ? '修改中...' : '发送中...' });
+  
+  // 🔥 核心：根据模式选择 action
+  const actionName = isEditMode.value ? 'update_wish' : 'add_wish';
+  // 如果是修改，需要传心愿ID
+  const params = { ...formData, uid: currentUserId };
+  if (isEditMode.value) {
+    params.id = wishId.value;
+  }
+
   uniCloud.callFunction({
     name: 'wish-api',
     data: {
-      action: 'add_wish',
-      // 把获取到的真实 ID 传进去
-      params: { ...formData, uid: currentUserId }
+      action: actionName,
+      params: params
     },
     success: (res) => {
       uni.hideLoading();
       if (res.result.code === 0) {
-        uni.showToast({ title: '发布成功' });
+        uni.showToast({ title: isEditMode.value ? '修改成功' : '发布成功' });
         setTimeout(() => uni.navigateBack(), 1500);
       } else {
-        uni.showToast({ title: '发布失败请重试', icon: 'none' });
+        uni.showToast({ title: '操作失败请重试', icon: 'none' });
       }
     },
     fail: () => {
@@ -85,7 +124,7 @@ page { background-color: $uni-bg-color-grey; }
   border-radius: 24rpx; padding: 24rpx 30rpx; width: 100%; box-sizing: border-box; font-size: 30rpx; color: #2D3436;
   transition: all 0.3s;
 }
-.input:focus, .textarea:focus { background: #fff; border-color: #FF4B5C; } /* 聚焦变粉红 */
+.input:focus, .textarea:focus { background: #fff; border-color: #FF4B5C; } 
 .input { height: 100rpx; }
 .textarea { height: 260rpx; }
 .input-ph { color: #B2BEC3; }

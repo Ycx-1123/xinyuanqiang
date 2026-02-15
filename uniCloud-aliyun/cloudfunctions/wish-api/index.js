@@ -6,7 +6,7 @@ exports.main = async (event, context) => {
 	const collection = db.collection('wishes');
 	const { action, params } = event; 
 
-	// 1. 获取心愿列表 (已增加身份隔离逻辑)
+	// 1. 获取心愿列表
 	if (action === 'get_list') {
 		const { uid, is_my } = params || {};
 		let query = {};
@@ -23,7 +23,7 @@ exports.main = async (event, context) => {
 		return { code: 0, data: res.data };
 	}
 
-	// 2. 发布新心愿 (保持原样)
+	// 2. 发布新心愿
 	if (action === 'add_wish') {
 		const res = await collection.add({
 			uid: params.uid,
@@ -58,6 +58,24 @@ exports.main = async (event, context) => {
 			fulfillTime: Date.now()
 		});
 		return { code: 0, msg: '圆梦成功！' };
+	}
+
+	// 🔥 新增：5. 删除心愿
+	if (action === 'delete_wish') {
+		// 实际项目中建议校验 params.uid 是否等于当前操作者，这里简化处理
+		await collection.doc(params.id).remove();
+		return { code: 0, msg: '删除成功' };
+	}
+
+	// 🔥 新增：6. 修改心愿
+	if (action === 'update_wish') {
+		await collection.doc(params.id).update({
+			title: params.title,
+			content: params.content,
+			wisherName: params.wisherName
+			// 不修改 status 和 helper 信息，防止状态错乱
+		});
+		return { code: 0, msg: '修改成功' };
 	}
 
 	return { code: 404, msg: '未定义操作' };

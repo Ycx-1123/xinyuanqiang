@@ -19,7 +19,12 @@
       </view>
     </view>
 
-    <view v-if="info.status === 0" class="btn-box">
+    <view v-if="isOwner" class="owner-actions">
+      <button class="action-btn outline-style" @click="goEdit">修改</button>
+      <button class="action-btn outline-style" @click="handleDelete">删除</button>
+    </view>
+
+    <view v-if="info.status === 0 && !isOwner" class="btn-box">
       <button class="help-btn" @click="goToFulfill">💖 我来帮忙</button>
     </view>
 
@@ -62,14 +67,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onLoad, onShow } from '@dcloudio/uni-app';
 
 const info = ref({});
 const wishId = ref(''); 
+const myUserId = ref('');
+
+// 判断是否是号主
+const isOwner = computed(() => {
+  return myUserId.value && info.value.uid && String(myUserId.value) === String(info.value.uid);
+});
 
 const loadDetail = () => {
-  // 建议加上 loading，体验更好
   uni.showLoading({ title: '加载中...', mask: true });
   
   uniCloud.callFunction({
@@ -87,11 +97,51 @@ const loadDetail = () => {
 
 onLoad((options) => { 
   wishId.value = options.id; 
+  myUserId.value = uni.getStorageSync('my_user_id');
 });
 
 onShow(() => { 
   if (wishId.value) loadDetail(); 
 });
+
+const goEdit = () => {
+  uni.navigateTo({
+    url: `/pages/wish/add?id=${wishId.value}` 
+  });
+};
+
+const handleDelete = () => {
+  uni.showModal({
+    title: '确认删除',
+    content: '删除后无法恢复，确定要删除这条心愿吗？',
+    confirmColor: '#FF4B5C',
+    success: (res) => {
+      if (res.confirm) {
+        uni.showLoading({ title: '删除中...' });
+        uniCloud.callFunction({
+          name: 'wish-api',
+          data: { 
+            action: 'delete_wish', 
+            params: { id: wishId.value } 
+          },
+          success: (delRes) => {
+            uni.hideLoading();
+            if (delRes.result.code === 0) {
+              uni.showToast({ title: '已删除' });
+              setTimeout(() => uni.navigateBack(), 1000);
+            } else {
+              uni.showToast({ title: '删除失败', icon: 'none' });
+            }
+          },
+          fail: () => {
+            uni.hideLoading();
+            uni.showToast({ title: '网络异常', icon: 'none' });
+          }
+        });
+      }
+    }
+  });
+};
 
 const goToFulfill = () => {
   const targetId = info.value._id || wishId.value;
@@ -119,10 +169,10 @@ const formatDate = (ts) => {
 
 <style lang="scss">
 @import "@/uni.scss";
-page { background-color: #FFF6F8; } /* 确保背景一致 */
+page { background-color: #FFF6F8; }
 .container { padding: 40rpx; }
 
-/* 详情卡片 */
+/* 详情卡片样式 */
 .detail-card {
   background: #fff; border-radius: 40rpx; padding: 50rpx 40rpx; margin-bottom: 50rpx;
   box-shadow: 0 10rpx 40rpx rgba(223, 230, 233, 0.4);
@@ -134,7 +184,6 @@ page { background-color: #FFF6F8; } /* 确保背景一致 */
 .name { display: block; font-size: 34rpx; font-weight: 700; color: #2D3436; }
 .time { font-size: 24rpx; color: #B2BEC3; }
 
-/* 状态标签 */
 .status-badge { font-size: 24rpx; padding: 10rpx 24rpx; border-radius: 30rpx; font-weight: 600; }
 .status-pending { background: #FFF0F1; color: #FF4B5C; }
 .status-done { background: #E6FFFA; color: #00B894; }
@@ -142,7 +191,43 @@ page { background-color: #FFF6F8; } /* 确保背景一致 */
 .content .title { font-size: 40rpx; font-weight: 800; color: #2D3436; margin-bottom: 24rpx; display: block; }
 .content .desc { font-size: 30rpx; color: #636E72; line-height: 1.8; }
 
-/* 帮忙按钮 */
+/* 统一按钮风格 */
+.owner-actions {
+  display: flex;
+  gap: 30rpx;
+  margin-bottom: 50rpx;
+  padding: 0 10rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 96rpx;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  background: #fff; 
+  box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.07);
+  transition: all 0.2s ease-in-out;
+  
+  &::after { border: none; }
+  
+  &:active { 
+    transform: scale(0.97); 
+    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+    background-color: #fafafa;
+  }
+}
+
+/* 按钮边框风格：统一粉色线框 */
+.outline-style {
+  color: #FF4B5C;  
+  border: 3rpx solid #FF4B5C; 
+}
+
+/* 帮忙按钮样式 */
 .help-btn {
   height: 110rpx; line-height: 110rpx;
   background: linear-gradient(135deg, #FF4B5C, #FF8F70);
@@ -152,7 +237,6 @@ page { background-color: #FFF6F8; } /* 确保背景一致 */
   &:active { transform: scale(0.98); opacity: 0.9; }
 }
 
-/* 圆梦卡片 */
 .done-card {
   background: #E6FFFA; border-radius: 40rpx; padding: 50rpx 40rpx;
   border: 4rpx solid #fff; 
