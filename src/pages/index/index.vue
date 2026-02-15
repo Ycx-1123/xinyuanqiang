@@ -37,27 +37,47 @@ const isAutoLogin = ref(true);
 
 onBeforeMount(async () => {
   const userId = uni.getStorageSync('my_user_id');
-  if (!userId) {
-    isAutoLogin.value = false;
-    return;
+  const userCenter = uniCloud.importObject('user-center');
+
+  // 1. 本地有ID，常规检查
+  if (userId) {
+    try {
+      const res = await userCenter.checkUser(userId);
+      if (res.code === 200) {
+        uni.switchTab({ url: '/pages/culture/culture' });
+        return;
+      }
+    } catch (e) {
+      console.log('本地ID失效，尝试静默恢复...');
+    }
   }
 
-  // ⚡️ 优雅审计：静默检查云端账号是否存在
+  // 2. 尝试静默登录（Auto Login）
   try {
-    const res = await uniCloud.database().collection('users').doc(userId).get();
-    if (res.result.data && res.result.data.length > 0) {
-      // 账号有效，直接去主页
-      uni.switchTab({ url: '/pages/culture/culture' });
-    } else {
-      // 账号已在云端被删，悄悄清理本地，展示登录框
-      uni.removeStorageSync('my_user_id');
-      uni.removeStorageSync('userInfo');
-      isAutoLogin.value = false;
+    const loginRes = await uni.login({ provider: 'weixin' });
+    const code = loginRes.code || loginRes[1]?.code;
+    
+    if (code) {
+      const silentRes = await userCenter.silentLogin(code);
+      if (silentRes.code === 200 && silentRes.data) {
+        // 恢复身份
+        uni.setStorageSync('my_user_id', silentRes.data._id);
+        uni.setStorageSync('userInfo', {
+          nickName: silentRes.data.nickName,
+          avatarUrl: silentRes.data.avatarUrl
+        });
+        uni.switchTab({ url: '/pages/culture/culture' });
+        return;
+      }
     }
-  } catch (e) {
-    // 网络波动，稳妥起见不强制退登，允许尝试进入
-    uni.switchTab({ url: '/pages/culture/culture' });
+  } catch (err) {
+    console.error('静默登录失败:', err);
   }
+
+  // 3. 失败，显示登录页
+  uni.removeStorageSync('my_user_id');
+  uni.removeStorageSync('userInfo');
+  isAutoLogin.value = false;
 });
 
 const onChooseAvatar = (e) => { userInfo.value.avatarUrl = e.detail.avatarUrl; };
@@ -67,26 +87,70 @@ const doLogin = async () => {
   if (!userInfo.value.avatarUrl || !userInfo.value.nickName) {
     return uni.showToast({ title: '请完善头像和昵称', icon: 'none' });
   }
+
   try {
+    uni.showLoading({ title: '准备上传...', mask: true });
+    
+    let finalAvatarUrl = userInfo.value.avatarUrl;
+    
+    // 如果是临时文件，尝试上传
+    if (finalAvatarUrl.startsWith('wxfile://') || finalAvatarUrl.startsWith('http://tmp/')) {
+       try {
+         const uploadRes = await uniCloud.uploadFile({
+           filePath: finalAvatarUrl,
+           cloudPath: `avatars/${Date.now()}_${Math.random().toString(36).slice(-6)}.jpg`
+         });
+         finalAvatarUrl = uploadRes.fileID; 
+       } catch (err) {
+         uni.hideLoading();
+         
+         // 🔥🔥🔥 核心修改：把错误直接打印到手机屏幕上！
+         // 这样你就能看到到底是域名还没生效，还是别的什么原因
+         console.error('上传失败详情:', err);
+         await new Promise(resolve => {
+            uni.showModal({
+                title: '上传失败(请截图)',
+                // 将错误对象转为字符串显示，以便调试
+                content: '错误信息：' + JSON.stringify(err), 
+                showCancel: false,
+                success: () => resolve()
+            });
+         });
+         
+         // 即使上传失败，也继续往下走，防止用户被卡在登录页进不去
+         // 这样虽然头像是临时的（下次进来会挂），但至少能先用
+       }
+    }
+
     uni.showLoading({ title: '登录中...', mask: true });
+    
     const loginRes = await uni.login({ provider: 'weixin' });
+    const code = loginRes.code || loginRes[1]?.code;
+
     const userCenter = uniCloud.importObject('user-center');
     const res = await userCenter.login({
       nickname: userInfo.value.nickName,
-      avatar_url: userInfo.value.avatarUrl,
-      code: loginRes.code 
+      avatar_url: finalAvatarUrl, 
+      code: code 
     });
+    
     uni.hideLoading();
+
     if (res && res.code === 200) {
-      uni.setStorageSync('userInfo', userInfo.value);
+      uni.setStorageSync('userInfo', { 
+        nickName: userInfo.value.nickName, 
+        avatarUrl: finalAvatarUrl 
+      });
       uni.setStorageSync('my_user_id', res.data._id);
-      uni.switchTab({ url: '/pages/culture/culture' });
+      uni.showToast({ title: '登录成功' });
+      setTimeout(() => { uni.switchTab({ url: '/pages/culture/culture' }); }, 800);
     } else {
-      uni.showModal({ title: '提示', content: res.msg, showCancel: false });
+      uni.showModal({ title: '登录失败', content: res.msg || '请重试', showCancel: false });
     }
   } catch (e) {
     uni.hideLoading();
-    uni.showModal({ title: '提示', content: '连接超时，请重试', showCancel: false });
+    // 全局错误也弹窗显示
+    uni.showModal({ title: '系统错误', content: JSON.stringify(e), showCancel: false });
   }
 };
 </script>
